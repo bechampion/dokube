@@ -32,13 +32,8 @@
 #	;}
 #;}
 ##end
-resource "null_resource" "generatetoken" {
-	provisioner "local-exec" {
-		command = "kubeadm token generate"
-	}
-}
 data "external" "token" {
-	program = ["bash" , "gen.sh" ] 
+	program = ["bash" , "kube/gen.sh" ] 
 }
 
 resource "digitalocean_droplet" "kube-master-server" {
@@ -55,12 +50,12 @@ resource "digitalocean_droplet" "kube-master-server" {
 		timeout = "2m"
 	}
 	provisioner "file" {
-		source = "nginx-deployment.yaml"
-		destination = "nginx-deployment.yaml"
+		source = "kube/nginx-deployment.yaml"
+		destination = "kube/nginx-deployment.yaml"
 	}
 	provisioner "file" {
-		source = "svc-nginx.yaml"
-		destination = "svc-nginx.yaml"
+		source = "kube/svc-nginx.yaml"
+		destination = "kube/svc-nginx.yaml"
 	}
 	provisioner "remote-exec" {
 		inline =  [
@@ -77,8 +72,8 @@ resource "digitalocean_droplet" "kube-master-server" {
 			"kubectl get ns",
 			"kubectl apply -f https://git.io/weave-kube-1.6",
 			"kubectl taint nodes kube-master node-role.kubernetes.io/master:NoSchedule-",
-			"kubectl create -f nginx-deployment.yaml",
-			"kubectl create -f svc-nginx.yaml"
+			"kubectl create -f kube/nginx-deployment.yaml",
+			"kubectl create -f kube/svc-nginx.yaml"
 
 		]
 	}
