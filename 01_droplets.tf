@@ -51,11 +51,11 @@ resource "digitalocean_droplet" "kube-master-server" {
 	}
 	provisioner "file" {
 		source = "kube/nginx-deployment.yaml"
-		destination = "kube/nginx-deployment.yaml"
+		destination = "nginx-deployment.yaml"
 	}
 	provisioner "file" {
 		source = "kube/svc-nginx.yaml"
-		destination = "kube/svc-nginx.yaml"
+		destination = "svc-nginx.yaml"
 	}
 	provisioner "remote-exec" {
 		inline =  [
@@ -72,8 +72,8 @@ resource "digitalocean_droplet" "kube-master-server" {
 			"kubectl get ns",
 			"kubectl apply -f https://git.io/weave-kube-1.6",
 			"kubectl taint nodes kube-master node-role.kubernetes.io/master:NoSchedule-",
-			"kubectl create -f kube/nginx-deployment.yaml",
-			"kubectl create -f kube/svc-nginx.yaml"
+			"kubectl create -f nginx-deployment.yaml",
+			"kubectl create -f svc-nginx.yaml"
 
 		]
 	}
